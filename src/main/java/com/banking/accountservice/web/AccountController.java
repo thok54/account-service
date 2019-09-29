@@ -17,7 +17,7 @@ public class AccountController {
 
     @GetMapping
     public List<Account> getAll() {
-        return accountService.process();
+        return accountService.findAll();
     }
 
     @GetMapping("/{id}")

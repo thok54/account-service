@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AccountService {
 
-    List<Account> process();
+    List<Account> findAll();
 
     Account find(int accountId);
 

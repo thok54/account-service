@@ -14,7 +14,7 @@ public class AccountServiceImpl implements AccountService {
     private AccountRepository repository;
 
     @Override
-    public List<Account> process() {
+    public List<Account> findAll() {
         return repository.findAll();
     }
 
