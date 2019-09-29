@@ -17,33 +17,24 @@ public class MySqlAccountRepository implements AccountRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    private Account mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Integer id = rs.getInt("id");
+        String name = rs.getString("name");
+        Float money = rs.getFloat("money");
+        String iban = rs.getString("iban");
+        return new Account(id, name, money, iban);
+    }
+
     @Override
     public List<Account> findAll() {
-        return jdbcTemplate.query("select * from ACCOUNTS", new RowMapper<Account>() {
-            @Override
-            public Account mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Integer id = rs.getInt("id");
-                String name = rs.getString("name");
-                Float money = rs.getFloat("money");
-                String iban = rs.getString("iban");
-                return new Account(id, name, money, iban);
-            }
-        });
+        return jdbcTemplate.query("select * from ACCOUNTS", this::mapRow);
     }
 
     @Override
     public Account find(int id) {
         try {
             return jdbcTemplate.queryForObject(String.format(
-                    "select * from ACCOUNTS where id = %d", id), new RowMapper<Account>() {
-                @Override
-                public Account mapRow(ResultSet rs, int i) throws SQLException {
-                    String name = rs.getString("name");
-                    Float money = rs.getFloat("money");
-                    String iban = rs.getString("iban");
-                    return new Account(id, name, money, iban);
-                }
-            });
+                    "select * from ACCOUNTS where id = %d", id), this::mapRow);
         } catch (Exception e) {
             throw new EntityNotFoundException(String.format(
                     "Account with ID = %d does not exist", id));
@@ -54,15 +45,7 @@ public class MySqlAccountRepository implements AccountRepository {
     public List<Account> findAllByName(String name) {
         try {
             return jdbcTemplate.query(String.format(
-                    "select * from ACCOUNTS where name = %s", name), new RowMapper<Account>() {
-                @Override
-                public Account mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    Integer id = rs.getInt("id");
-                    Float money = rs.getFloat("money");
-                    String iban = rs.getString("iban");
-                    return new Account(id, name, money, iban);
-                }
-            });
+                    "select * from ACCOUNTS where name = %s", name), this::mapRow);
         } catch (Exception e) {
             throw new EntityNotFoundException(String.format("Account with NAME = %s does not exist", name));
         }
@@ -74,8 +57,8 @@ public class MySqlAccountRepository implements AccountRepository {
         String name = account.getName();
         Float money = account.getMoney();
         String iban = account.getIban();
-        jdbcTemplate.update(String.format(
-                "INSERT INTO ACCOUNTS (name, money, iban) VALUES (\"%s\", %f, \"%s\")", name, money, iban));
+        jdbcTemplate.update(
+                "INSERT INTO ACCOUNTS (name, money, iban) VALUES (?, ?, ?)", name, money, iban);
     }
 
     @Override
@@ -83,13 +66,13 @@ public class MySqlAccountRepository implements AccountRepository {
         String name = account.getName();
         Float money = account.getMoney();
         String iban = account.getIban();
-        jdbcTemplate.update(String.format(
-                "UPDATE ACCOUNTS SET name = \"%s\", money = %f, iban = \"%s\" WHERE id = %d", name, money, iban, id));
+        jdbcTemplate.update(
+                "UPDATE ACCOUNTS SET name = ?, money = ?, iban = ? WHERE id = ?", name, money, iban, id);
     }
 
     @Override
     public void delete(int id) {
-        jdbcTemplate.update(String.format("DELETE FROM ACCOUNTS WHERE id = " + id));
+        jdbcTemplate.update("DELETE FROM ACCOUNTS WHERE id = " + id);
     }
 
     @Override
