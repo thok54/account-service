@@ -35,8 +35,8 @@ public class MySqlAccountRepository implements AccountRepository {
     @Override
     public List<Account> findAllByName(String name) {
         try {
-            return jdbcTemplate.query(String.format(
-                    "select * from ACCOUNTS where name = %s", name), accountRowMapper);
+            return jdbcTemplate.query(
+                    "select * from ACCOUNTS where name like '%@name%'".replaceAll("@name", name), accountRowMapper);
         } catch (Exception e) {
             throw new EntityNotFoundException(
                     String.format("Account with NAME = %s does not exist", name));
