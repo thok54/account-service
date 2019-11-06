@@ -17,10 +17,8 @@ public class SearchController {
     @Autowired
     AccountService searchService;
 
-    // TODO: Search
     @GetMapping("/search")
     public List<Account> search(@RequestParam String regex) {
-        System.out.println(regex);
         return searchService.findAllByName(regex);
     }
 }
