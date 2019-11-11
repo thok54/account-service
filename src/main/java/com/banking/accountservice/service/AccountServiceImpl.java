@@ -29,6 +29,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public List<Account> search(String regex) {
+        return repository.search(regex);
+    }
+
+    @Override
     public void store(Account acc) {
         repository.store(acc);
     }

@@ -12,6 +12,8 @@ public interface AccountRepository {
 
     List<Account> findAllByName(String name);
 
+    List<Account> search(String regex);
+
     void store(Account account);
 
     void update(int id, Account account);

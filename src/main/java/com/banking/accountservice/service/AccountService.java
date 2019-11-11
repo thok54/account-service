@@ -12,6 +12,8 @@ public interface AccountService {
 
     List<Account> findAllByName(String name);
 
+    List<Account> search(String regex);
+
     void store(Account acc);
 
     void update(int id, Account acc);

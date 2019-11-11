@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Repository
 public class MySqlAccountRepository implements AccountRepository {
@@ -41,6 +43,30 @@ public class MySqlAccountRepository implements AccountRepository {
             throw new EntityNotFoundException(
                     String.format("Account with NAME = %s does not exist", name));
         }
+    }
+
+    //TODO: search by regex
+    @Override
+    public List<Account> search(String regex) {
+        Pattern pattern = Pattern.compile(regex);
+
+        try {
+            return jdbcTemplate.query(
+                    "select * from ACCOUNTS where name REGEXP '" + pattern + "'", accountRowMapper);
+        } catch (Exception e) {
+            throw new EntityNotFoundException(
+                    String.format("Account with NAME = %s does not exist", pattern));
+        }
+    }
+
+    public static int runTest(String regex, String text) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+        int matches = 0;
+        while (matcher.find()) {
+            matches++;
+        }
+        return matches;
     }
 
 
