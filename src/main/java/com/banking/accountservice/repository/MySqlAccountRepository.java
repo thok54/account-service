@@ -45,28 +45,15 @@ public class MySqlAccountRepository implements AccountRepository {
         }
     }
 
-    //TODO: search by regex
     @Override
     public List<Account> search(String regex) {
-        Pattern pattern = Pattern.compile(regex);
-
         try {
             return jdbcTemplate.query(
-                    "select * from ACCOUNTS where name REGEXP '" + pattern + "'", accountRowMapper);
+                    "select * from ACCOUNTS where name REGEXP '" + regex + "'", accountRowMapper);
         } catch (Exception e) {
             throw new EntityNotFoundException(
-                    String.format("Account with NAME = %s does not exist", pattern));
+                    String.format("Account with NAME = %s does not exist", regex));
         }
-    }
-
-    public static int runTest(String regex, String text) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(text);
-        int matches = 0;
-        while (matcher.find()) {
-            matches++;
-        }
-        return matches;
     }
 
 
