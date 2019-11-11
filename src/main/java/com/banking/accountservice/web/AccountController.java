@@ -30,6 +30,11 @@ public class AccountController {
         return accountService.findAllByName(name);
     }
 
+    @GetMapping("/search")
+    public List<Account> search(@RequestParam String regex) {
+        return accountService.search(regex);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void store(@RequestBody Account acc) {
